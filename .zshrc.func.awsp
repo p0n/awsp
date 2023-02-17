@@ -1,0 +1,10 @@
+func awsp() {
+    local profile=` \
+        aws configure list-profiles | sed '/^default$/d' | sort -n | \
+        sed -e "1iCURRENT PROFILE=${AWS_PROFILE:-N/A}" -e '$a~N/A' | \
+        fzf --reverse --preview-window=down --header-lines=1 \
+        --preview '[[ {} =~ ^~ ]] || aws configure list --profile {}' \
+    `
+    export AWS_PROFILE=${profile##\~*}
+    [[ -n "$AWS_PROFILE" ]] || unset AWS_PROFILE
+}
